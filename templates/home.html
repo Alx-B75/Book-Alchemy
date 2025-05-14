@@ -1,16 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  </head>
-  <body>
+{% extends "base.html" %}
 
-    {% for book in books %}
-    <div> <h3>{{ book.title }}</h3>
+{% block title %}Book Alchemy Library{% endblock %}
+
+{% block content %}
+<div class="album py-5" style="background-color: #f8f9fa; min-height: 100vh;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4 pt-4">
+            <h1 style="font-family: 'Cinzel', serif;">Book Alchemy Library</h1>
+            <form class="d-flex" method="get" action="{{ url_for('home') }}">
+                <input class="form-control me-2" type="search" name="q" placeholder="Search books..." value="{{ request.args.get('q', '') }}" aria-label="Search">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+        </div>
+
+        <div class="mb-4">
+            <a href="{{ url_for('add_author') }}" class="btn btn-primary me-2">Add Author</a>
+            <a href="{{ url_for('add_book') }}" class="btn btn-success me-2">Add Book</a>
+            <a href="{{ url_for('list_authors') }}" class="btn btn-info">View Authors</a>
+        </div>
+
+        {% if books %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for book in books %}
+            <div class="col d-flex align-items-stretch">
+                 <div class="card shadow-sm h-100">
+                    <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg"
+                         class="card-img-top"
+                         alt="Cover of {{ book.title }}"
+                         style="width: 100%; height: 300px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ book.title }}</h5>
+                        <p class="card-text text-muted mb-3">by {{ book.author.name }}</p>
+                        <div class="mt-auto text-end">
+                            <form action="{{ url_for('delete_book', book_id=book.id) }}" method="post" onsubmit="return confirm('Really delete this book?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+             <p class="lead text-muted">No books found{% if request.args.get('q') %} for "{{ request.args.get('q') }}"{% endif %}.</p>
+        </div>
+        {% endif %}
     </div>
-    {% endfor %}
+</div>
 
-  </body>
-</html>
+{% endblock %}

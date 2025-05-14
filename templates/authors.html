@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Authors</h2>
+  <a href="{{ url_for('home') }}" class="btn btn-secondary mb-3">← Back to Library</a>
+  <a href="{{ url_for('add_author') }}" class="btn btn-primary mb-3 ms-2">Add Author</a>
+
+  <ul class="list-group">
+    {% for author in authors %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ author.name }}
+        <form action="{{ url_for('delete_author', author_id=author.id) }}"
+              method="post"
+              onsubmit="return confirm('Really delete this author and all their books?');">
+          <button type="submit" class="btn btn-danger btn-sm">Delete Author</button>
+        </form>
+      </li>
+    {% else %}
+      <li class="list-group-item">No authors yet.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
